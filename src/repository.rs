@@ -2,7 +2,7 @@ use std::io;
 use std::io::prelude::*;
 use std::fs::File;
 
-use crate::{util as ul, IMAGE_SIZE, LABEL_SIZE};
+use crate::util as ul;
 
 pub struct DataProvider {
     images_source: File,
@@ -38,7 +38,7 @@ impl DataProvider {
     }
 
     /// returns optional tuple of image and label
-    pub fn next(&mut self) -> Option<([u8; IMAGE_SIZE], u8)> {
+    pub fn next(&mut self) -> Option<([u8; ul::IMAGE_SIZE], u8)> {
         self.count += 1;
 
         if self.count > self.total {

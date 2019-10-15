@@ -1,8 +1,12 @@
 use std::io;
 use std::io::prelude::*;
 use std::fs::File;
-use crate::{HEAD_SIZE, IMAGE_SIZE, LABEL_SIZE};
 
+pub const IMAGE_ROW: usize = 28usize;
+pub const IMAGE_COLUMN: usize = 28usize;
+pub const IMAGE_SIZE: usize = IMAGE_ROW * IMAGE_COLUMN;
+pub const HEAD_SIZE: usize = 4usize;
+pub const LABEL_SIZE: usize = 1usize;
 
 pub fn read_next_head(source: &mut File) -> u32 {
     let mut buffer: [u8; HEAD_SIZE] = [0; HEAD_SIZE];

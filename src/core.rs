@@ -5,7 +5,7 @@ struct Neuron {
     /// 误差
     diff: f32,
     /// 权重
-    weight: Vec<f32>,
+    weights: Vec<f32>,
 }
 
 impl Neuron {
@@ -13,7 +13,7 @@ impl Neuron {
         Neuron {
             activation: 0.0f32,
             diff: 0.0f32,
-            weight: Vec::new()
+            weights: Vec::new()
         }
     }
 }
@@ -21,9 +21,9 @@ impl Neuron {
 /// 神经细胞层
 struct NeuronLayer {
     /// 每个神经细胞的输入数目
-    inputs: usize,
+    input_size: usize,
     /// 神经细胞数目
-    size: usize,
+    neuron_size: usize,
     /// 神经细胞数组
     neurons: Vec<Neuron>
 }

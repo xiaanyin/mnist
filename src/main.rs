@@ -10,15 +10,11 @@ const TRAIN_LABELS: &str = "resources/train-labels.idx1-ubyte";
 const TEST_IMAGES: &str = "resources/t10k-images.idx3-ubyte";
 const TEST_LABELS: &str = "resources/t10k-labels.idx1-ubyte";
 
-const IMAGE_ROW: usize = 28usize;
-const IMAGE_COLUMN: usize = 28usize;
-const IMAGE_SIZE: usize = IMAGE_ROW * IMAGE_COLUMN;
-const HEAD_SIZE: usize = 4usize;
-const LABEL_SIZE: usize = 1usize;
-
 const ACTIVATION_RESPONSE: f32 = 0.7f32;
 const BIAS: i32 = 1i32;
 
+// 输出层神经元个数,固定784个(28*28)
+const NUM_NET_IN: usize = 784usize;
 // 输出层神经元个数, 0~9, 固定10个
 const NUM_NET_OUT: usize = 10usize;
 // 隐含层神经元个数， TODO 理解有待加深， 为什么是200？
