@@ -60,7 +60,8 @@ def load_mnist_label(path, filename, type='train'):
 
 
 if __name__ == '__main__':
-    path = 'D:\\Work\\rust-castle\\mnist-util\\unpack'
+    # 执行的时候请修改该路径
+    path = 'D:\\Work\\'
     train_images = 'train-images.idx3-ubyte'
     load_mnist_image(path, train_images, 'train')
     train_labels = 'train-labels.idx1-ubyte'
