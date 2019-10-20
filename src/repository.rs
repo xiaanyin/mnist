@@ -7,7 +7,7 @@ use crate::util as ul;
 pub struct DataProvider {
     images_source: File,
     labels_source: File,
-    total: u32,
+    pub total: u32,
     count: u32,
 }
 
@@ -44,9 +44,9 @@ impl DataProvider {
         if self.count > self.total {
             None
         } else {
-            let buffer_image = ul::read_next_image(&mut self.images_source);
-            let buffer_label = ul::read_next_image(&mut self.labels_source);
-            Some((buffer_image, buffer_label[0]))
+            let buffer_image: [u8; ul::IMAGE_SIZE] = ul::read_next_image(&mut self.images_source);
+            let buffer_label: u8 = ul::read_next_label(&mut self.labels_source);
+            Some((buffer_image, buffer_label))
         }
     }
 }
