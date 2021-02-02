@@ -38,7 +38,7 @@ const TEST_IMAGES: &str = "resources/t10k-images.idx3-ubyte";
 const TEST_LABELS: &str = "resources/t10k-labels.idx1-ubyte";
 
 
-// 输出层神经元个数,固定784个(28*28)
+// 输入层神经元个数,固定784个(28*28)
 //const NUM_NET_IN: usize = 784usize;
 // 输出层神经元个数, 0~9, 固定10个
 const NUM_NET_OUT: usize = 10usize;
