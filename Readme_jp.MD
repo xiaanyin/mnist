@@ -18,7 +18,7 @@
 
 - ステップ２、[test_result.log](/test_result.log)の結果を参照して、適切なパラメータを設定する（省略可）
 
-- ステップ３、Cargoで実行する（注意：releaseモードで実行する、Debugモードは結構時間がかかります）
+- ステップ３、Cargoで実行する（注意：releaseモードで実行してください、Debugモードは結構時間がかかります）
     ```
     cargo run --release >> test_result.log
     ```
