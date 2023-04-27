@@ -1,24 +1,22 @@
-### Language：[中文](Readme.md "Readme.md") [日本語](Readme_jp.md "Readme_jp.md")
----
-### 全连接神经网络实现手写数字识别（MNIST）
+### 全結合ネットワークで手書き数字を識別する（MNIST）
 
-#### 简介
+#### 紹介
 
-- 受博客[神经网络实现手写数字识别（MNIST）](https://blog.csdn.net/xuanwolanxue/article/details/71565934) 的启发，
-写了一个0到9的数字识别程序，目的是为了学习Rust和全连接神经网络的算法实现。<br>
+- ブログ[全結合ネットワークで手書き数字を識別する（MNIST）](https://blog.csdn.net/xuanwolanxue/article/details/71565934) のインスピレーションを受けて、
+0~9手書き数字を識別できるのプログラムを作りました。目的はRustの基本文法と全結合ネットワーク実現方法を勉強するため。
 
-- 原博客内容遵循[CC 4.0 BY-SA](https://creativecommons.org/licenses/by-sa/4.0/)版权协议。<br>
-原博客的代码是用c++写的，放在[doc/guide_src](/doc/guide_src)下，供参考。
+- 参照元ブログは[CC 4.0 BY-SA](https://creativecommons.org/licenses/by-sa/4.0/) 著作権契約に従っています。
+元のソースはC++で作って、[doc/guide_src](/doc/guide_src)に格納しました、
 
-- 测试的结果在[test_result.log](/test_result.log)，各个参数经过调整以后，准确率大概在89%到92%之间。
+- テストの結果は[test_result.log](/test_result.log)にあります、各パラメータを調整して、精度は89%～92％ぐらいなります。
 
-#### 执行
+#### 実行方法
 
-- 首先，将[resources/gz](/resources/gz)下的所有内容解压缩到[resources](/resources)下。
+- ステップ１、[resources/gz](/resources/gz)配下圧縮したファイルを[resources](/resources)に解凍する。
 
-- 然后根据[test_result.log](/test_result.log)适当调整自己需要的参数（可以略过此步）。
+- ステップ２、[test_result.log](/test_result.log)の結果を参照して、適切なパラメータを設定する（省略可）
 
-- 最后执行cargo命令（注意：要用release模式执行，否则会很慢）。
+- ステップ３、Cargoで実行する（注意：releaseモードで実行してください、Debugモードは結構時間がかかります）
     ```
     cargo run --release >> test_result.log
     ```
