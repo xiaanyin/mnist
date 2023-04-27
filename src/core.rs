@@ -1,18 +1,18 @@
 use crate::util as ul;
 use rand::prelude::*;
 
-/// 学习率 TODO 该如何调整以达到最优学习率？
+/// 学習率 TODO 調整する必要がありますか?
 pub const NET_LEARNING_RATE: f32 = 0.2f32;
-/// Sigmoid函数缩放率 TODO 如何理解这个参数的作用？
+/// Sigmoid関数スケーリング TODO 何で必要
 pub const ACTIVATION_RESPONSE: f32 = 0.7f32;
 
-/// 神经细胞
+/// 神経細胞
 struct NeuralCell {
-    /// 激活
+    /// アクティベーション
     activation: f32,
-    /// 误差
+    /// 誤差
     deviation: f32,
-    /// 权重
+    /// 重み
     weights: Vec<f32>,
 }
 
@@ -33,13 +33,13 @@ impl NeuralCell {
     }
 }
 
-/// 神经层
+/// 神経層
 pub struct NeuralLayer {
-    /// 每个神经细胞的输入数目
+    /// インプット個数
     input_numbers: usize,
-    /// 神经细胞数目
+    /// 神経細胞個数
     cell_numbers: usize,
-    /// 神经细胞数组
+    /// 経細胞組
     cells_vec: Vec<NeuralCell>,
 }
 
@@ -58,7 +58,7 @@ impl NeuralLayer {
         }
     }
 
-    /// 重置神经层
+    /// 神経レイヤーをリセットする
     fn reset_layer(&mut self, rng: &mut ThreadRng) {
         self.cells_vec = Vec::with_capacity(self.cell_numbers);
         for index in 0..self.cell_numbers {
@@ -66,14 +66,14 @@ impl NeuralLayer {
         }
     }
 
-    /// 清空当前神经层所有误差
+    /// 現在のニューラルレイヤーのすべての誤差をクリアします
     fn clear_all_deviations(&mut self) {
         for cell in &mut self.cells_vec {
             cell.deviation = 0.0f32;
         }
     }
 
-    /// 获取当前层所有的输出值
+    /// 現在のレイヤーのすべての出力値を取得する
     fn get_layer_activation_vec(&self) -> Vec<f32> {
         let mut layer_activation_vec = Vec::with_capacity(self.cell_numbers);
         for index in 0..self.cell_numbers {
@@ -83,15 +83,15 @@ impl NeuralLayer {
     }
 }
 
-/// 神经网络
+/// ニューラル ネットワーク
 pub struct NeuralNet {
-    /// 输出层个数
+    /// 出力レイヤー数
     output_layer_numbers: usize,
-    /// 隐藏层数目（不包含输入输出层）
+    /// 隠れレイヤーの数（インプットレイヤーは含まれていない）
     hidden_layers_size: usize,
-    /// 网络总误差（所有误差的方差和)
+    /// ネットの誤差合計数（すべて誤差分散の合計)
     total_deviation: f32,
-    /// 神经层（不包含输入层，最后一层为输出层）
+    /// 神経レイヤー（インプットレイヤーは含まれていない，最後は出力レイヤー）
     layers_vec: Vec<NeuralLayer>,
 }
 
@@ -105,11 +105,11 @@ impl NeuralNet {
         }
     }
 
-    /// 训练
+    /// 訓練
     pub fn training(&mut self, inputs: &Vec<f32>, targets: &Vec<f32>) {
-        // 正向传播
+        // 順伝播
         self.training_update(inputs, targets);
-        // 反向传播
+        // 逆伝播
         for index in (0usize..=self.hidden_layers_size).rev() {
             match index {
                 0 => self.training_layer(index, inputs),
@@ -122,7 +122,7 @@ impl NeuralNet {
         }
     }
 
-    /// 数字识别
+    /// 数字認識
     pub fn determination(&mut self, inputs: &Vec<f32>) -> Vec<f32> {
         let mut next_inputs: Vec<f32> = inputs.clone();
         for index in 0..=self.hidden_layers_size {
@@ -132,7 +132,7 @@ impl NeuralNet {
         next_inputs
     }
 
-    /// 重置神经网络
+    /// ニューラル ネットワークをリセットする
     pub fn reset(&mut self, rng: &mut ThreadRng) {
         for index in 0..=self.hidden_layers_size {
             let layer = &mut self.layers_vec[index];
@@ -141,14 +141,14 @@ impl NeuralNet {
         self.total_deviation = 9999.0f32;
     }
 
-    /// 增加神经层
+    /// ニューラルレイヤーを追加する
     pub fn push_neural_layer(&mut self, layer: NeuralLayer) {
         self.layers_vec.push(layer);
     }
 
-    /// 以训练模式更新网络（更新输出层的每个神经细胞的输出误差）
+    /// トレーニング モードでネットワークを更新します (出力層の各ニューロンの出力エラーを更新します)。
     fn training_update(&mut self, inputs: &Vec<f32>, targets: &Vec<f32>) {
-        // 正向传播
+        // 順伝播
         let mut next_inputs: Vec<f32> = inputs.clone();
         for index in 0..=self.hidden_layers_size {
             self.update_layer(index, &next_inputs);
@@ -156,7 +156,7 @@ impl NeuralNet {
                 next_inputs = self.layers_vec[index].get_layer_activation_vec();
             }
         }
-        // 重置输出层误差
+        // 出力レイヤー誤差のリセット
         let output_layer = &mut self.layers_vec[self.hidden_layers_size];
         let mut total_deviation_temp: f32 = 0.0f32;
         for index in 0..self.output_layer_numbers {
@@ -167,36 +167,36 @@ impl NeuralNet {
         self.total_deviation = total_deviation_temp;
     }
 
-    /// 训练神经细胞层
+    /// ニューロンレイヤーを訓練する
     fn training_layer(&mut self, layer_index: usize, pre_activations: &Vec<f32>) {
         let layer: &mut NeuralLayer = &mut self.layers_vec[layer_index];
         let mut pre_layer_update_vec: Vec<(usize, f32)> = Vec::new();
-        // 遍历当前层的神经细胞，并计算每个神经细胞的输出误差以及调整权重的依据
+        // 現在の層の神経細胞をトラバースし、各神経細胞の出力誤差と重みを調整する根拠を計算する
         for index_cell in 0..layer.cell_numbers {
             let cell: &mut NeuralCell = &mut layer.cells_vec[index_cell];
-            // 利用反向传播函数计算反向传播回来的误差
+            // 逆伝播関数を使用して逆伝播誤差を計算する
             let deviation: f32 = cell.deviation * ul::back_propagation(cell.activation);
-            // 遍历当前神经细胞的所有权重，并基于反向传播回来的误差和学习率等参数计算新的权重值
+            // 現在のニューロンのすべての重みをトラバースし、逆伝播に基づいて誤差と学習率などのパラメータを考慮して新しい重みを計算する。
             for index_weight in 0..layer.input_numbers {
-                // 记录前一层神经细胞需要更新的权重
+                // ニューロンの前のレイヤーで更新する必要がある重みを記録します
                 match layer_index {
                     0 => {}
                     _ => {
                         pre_layer_update_vec.push((index_weight, cell.weights[index_weight] * deviation))
                     }
                 };
-                // 更新当前神经细胞偏置项的权重
+                // 現在のニューロン バイアス アイテムの重みを更新します
                 let update_value: f32 = cell.weights[index_weight] + deviation * NET_LEARNING_RATE * pre_activations[index_weight];
                 cell.weights[index_weight] = update_value;
-                // 增加噪音，防止过拟合
-                // TODO 什么样的情况会导致过拟合与拟合不足
+                // オーバーフィッティングを防ぐためにノイズを追加する
+                // TODO アンダーフィッティングとオーバーフィッティング ？は何故発生するか
                 if index_weight == (layer.input_numbers - 1) {
                     let update_value: f32 = cell.weights[index_weight] + deviation * NET_LEARNING_RATE;
                     cell.weights[index_weight] = update_value;
                 }
             }
         }
-        // 更新前一层神经细胞偏置项的权重
+        // 前のレイヤーのニューロン バイアス アイテムの重みを更新します
         if layer_index > 0 && !pre_layer_update_vec.is_empty() {
             let pre_layer: &mut NeuralLayer = &mut self.layers_vec[layer_index - 1];
             for update_src in &pre_layer_update_vec {
@@ -206,7 +206,7 @@ impl NeuralNet {
         }
     }
 
-    /// 根据输入更新所有神经细胞的输出
+    /// 入力に基づいてすべてのニューロンの出力を更新します
     fn update_layer(&mut self, layer_index: usize, inputs: &Vec<f32>) {
         let layer: &mut NeuralLayer = &mut self.layers_vec[layer_index];
         for index_cell in 0..layer.cell_numbers {
@@ -216,9 +216,9 @@ impl NeuralNet {
             for index_weight in 0..layer.input_numbers {
                 cell_input_total += weights[index_weight] * inputs[index_weight];
             }
-            // 增加噪音，防止过拟合
+            // オーバーフィッティングを防ぐためにノイズを追加する
             cell_input_total += weights[layer.input_numbers - 1];
-            // 计算输出值
+            // 出力値を計算する
             cell.activation = ul::sigmoid_activation(cell_input_total, ACTIVATION_RESPONSE);
         }
     }

@@ -8,7 +8,7 @@ pub const IMAGE_SIZE: usize = IMAGE_ROW * IMAGE_COLUMN;
 pub const HEAD_SIZE: usize = 4usize;
 pub const LABEL_SIZE: usize = 1usize;
 
-/// 读取下一个Head
+/// 次のHead
 pub fn read_next_head(source: &mut File) -> u32 {
     let mut buffer: [u8; HEAD_SIZE] = [0; HEAD_SIZE];
     match source.read(&mut buffer[..]) {
@@ -18,7 +18,7 @@ pub fn read_next_head(source: &mut File) -> u32 {
     u32::from_be_bytes(buffer)
 }
 
-/// 读取下一个Image
+/// 次のImage
 pub fn read_next_image(source: &mut File) -> [u8; IMAGE_SIZE] {
     let mut buffer: [u8; IMAGE_SIZE] = [0; IMAGE_SIZE];
     match source.read(&mut buffer[..]) {
@@ -28,7 +28,7 @@ pub fn read_next_image(source: &mut File) -> [u8; IMAGE_SIZE] {
     buffer
 }
 
-/// 读取下一个Label
+/// 次のLabel
 pub fn read_next_label(source: &mut File) -> u8 {
     let mut buffer: [u8; LABEL_SIZE] = [0; LABEL_SIZE];
     match source.read(&mut buffer[..]) {
@@ -38,17 +38,17 @@ pub fn read_next_label(source: &mut File) -> u8 {
     buffer[0]
 }
 
-/// Sigmoid函数
+/// Sigmoid関数
 pub fn sigmoid_activation(input: f32, response: f32) -> f32 {
     1.0 / (1.0 + (input * -1.0f32 * response).exp())
 }
 
-///　求激活函数导数
+/// アクティベーション関数の導関数を求める
 pub fn back_propagation(activation: f32) -> f32 {
     activation * (1.0f32 - activation)
 }
 
-/// 预处理输入值（无噪音）
+/// 入力値の前処理（ノイズなし）
 pub fn prepare_inputs_no_noise(inputs: &[u8; IMAGE_SIZE]) -> Vec<f32> {
     let mut output = Vec::with_capacity(IMAGE_SIZE);
     for index in 0..IMAGE_SIZE {
@@ -60,7 +60,7 @@ pub fn prepare_inputs_no_noise(inputs: &[u8; IMAGE_SIZE]) -> Vec<f32> {
     output
 }
 
-/// 预处理输入值（含噪音）
+/// 入力値の前処理（ノイズあり）
 pub fn prepare_inputs_with_noise(inputs: &[u8; IMAGE_SIZE], rng: &mut ThreadRng) -> Vec<f32> {
     let mut output = Vec::with_capacity(IMAGE_SIZE);
     for index in 0..IMAGE_SIZE {
@@ -73,7 +73,7 @@ pub fn prepare_inputs_with_noise(inputs: &[u8; IMAGE_SIZE], rng: &mut ThreadRng)
     output
 }
 
-/// 返回vec最大值的坐标
+/// vec最大値のインデクスを取得
 pub fn find_max_index_in_vec(target_vec: &Vec<f32>) -> u8 {
     let mut max_index: usize = 0usize;
     let mut max_value: f32 = target_vec[max_index];

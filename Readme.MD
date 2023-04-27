@@ -1,3 +1,5 @@
+### Language：[中文](Readme.md "Readme.md") [日本語](Readme_jp.md "Readme_jp.md")
+---
 ### 全连接神经网络实现手写数字识别（MNIST）
 
 #### 简介

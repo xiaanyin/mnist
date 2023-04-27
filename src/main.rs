@@ -38,13 +38,13 @@ const TEST_IMAGES: &str = "resources/t10k-images.idx3-ubyte";
 const TEST_LABELS: &str = "resources/t10k-labels.idx1-ubyte";
 
 
-// 输入层神经元个数,固定784个(28*28)
+// 入力レイヤーのニューロン数、固定784個(28*28)
 //const NUM_NET_IN: usize = 784usize;
-// 输出层神经元个数, 0~9, 固定10个
+// 出力レイヤーのニューロン数、 0~9、固定10個
 const NUM_NET_OUT: usize = 10usize;
-// 隐含层神经元个数， TODO 理解有待加深，如何选择合适的神经元个数？
+// 隠れレイヤーのニューロン数 TODO 理解を深める必要があります。適切な数のニューロンを選択するにはどうすればよいですか?
 const NUM_HIDDEN: usize = 400usize;
-// 学习次数
+// 学習回数
 const LEARNING_TIMES: usize = 5usize;
 
 fn main() {
@@ -91,7 +91,9 @@ fn execution() {
             }
         };
     }
-    println!("隐含层神经元个数=[{}]，学习率=[{}]，激活函数缩放率=[{}]，学习次数=[{}]，测试结果[{}/{}]",
+    //println!("隐含层神经元个数=[{}]，学习率=[{}]，激活函数缩放率=[{}]，学习次数=[{}]，测试结果[{}/{}]",
+    //         NUM_HIDDEN, NET_LEARNING_RATE, ACTIVATION_RESPONSE, LEARNING_TIMES, ok_counts, test_data_provider.total);
+    println!("隠れレイヤーのニューロン数=[{}]，学習率=[{}]，アクティベーション関数のスケーリング=[{}]，学習回数=[{}]，テスト結果[{}/{}]",
              NUM_HIDDEN, NET_LEARNING_RATE, ACTIVATION_RESPONSE, LEARNING_TIMES, ok_counts, test_data_provider.total);
 }
 
