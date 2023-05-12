@@ -1,6 +1,6 @@
-use std::io::prelude::*;
-use std::fs::File;
 use rand::prelude::*;
+use std::fs::File;
+use std::io::prelude::*;
 
 pub const IMAGE_ROW: usize = 28usize;
 pub const IMAGE_COLUMN: usize = 28usize;

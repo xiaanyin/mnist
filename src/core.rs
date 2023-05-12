@@ -1,11 +1,6 @@
 use crate::util as ul;
 use rand::prelude::*;
 
-/// 学习率 TODO 该如何调整以达到最优学习率？
-pub const NET_LEARNING_RATE: f32 = 0.2f32;
-/// Sigmoid函数缩放率 TODO 如何理解这个参数的作用？
-pub const ACTIVATION_RESPONSE: f32 = 0.7f32;
-
 /// 神经细胞
 struct NeuralCell {
     /// 激活
@@ -24,8 +19,7 @@ impl NeuralCell {
             weights: {
                 let mut new_weights = Vec::with_capacity(input_numbers);
                 for _ in 0..input_numbers {
-                    let rand_f32: f32 = rng.gen();
-                    new_weights.push(rand_f32 - 0.5f32);
+                    new_weights.push(rng.gen::<f32>() - 0.5f32);
                 }
                 new_weights
             },
@@ -44,7 +38,11 @@ pub struct NeuralLayer {
 }
 
 impl NeuralLayer {
-    pub fn new(param_input_number: usize, param_cell_numbers: usize, rng: &mut ThreadRng) -> NeuralLayer {
+    pub fn new(
+        param_input_number: usize,
+        param_cell_numbers: usize,
+        rng: &mut ThreadRng,
+    ) -> NeuralLayer {
         NeuralLayer {
             input_numbers: param_input_number,
             cell_numbers: param_cell_numbers,
@@ -93,15 +91,26 @@ pub struct NeuralNet {
     total_deviation: f32,
     /// 神经层（不包含输入层，最后一层为输出层）
     layers_vec: Vec<NeuralLayer>,
+    /// 学习率 TODO 该如何调整以达到最优学习率？
+    net_learning_rate: f32,
+    /// Sigmoid函数缩放率 TODO 如何理解这个参数的作用？
+    activation_response: f32,
 }
 
 impl NeuralNet {
-    pub fn new(param_output_layer_numbers: usize, param_hidden_layers_size: usize) -> NeuralNet {
+    pub fn new(
+        param_output_layer_numbers: usize,
+        param_hidden_layers_size: usize,
+        net_learning_rate: f32,
+        activation_response: f32,
+    ) -> NeuralNet {
         NeuralNet {
             output_layer_numbers: param_output_layer_numbers,
             hidden_layers_size: param_hidden_layers_size,
             total_deviation: 9999.0f32,
             layers_vec: Vec::new(),
+            net_learning_rate: net_learning_rate,
+            activation_response: activation_response,
         }
     }
 
@@ -115,7 +124,8 @@ impl NeuralNet {
                 0 => self.training_layer(index, inputs),
                 _ => {
                     self.layers_vec[index - 1].clear_all_deviations();
-                    let pre_activations: Vec<f32> = self.layers_vec[index - 1].get_layer_activation_vec();
+                    let pre_activations: Vec<f32> =
+                        self.layers_vec[index - 1].get_layer_activation_vec();
                     self.training_layer(index, &pre_activations);
                 }
             };
@@ -181,17 +191,18 @@ impl NeuralNet {
                 // 记录前一层神经细胞需要更新的权重
                 match layer_index {
                     0 => {}
-                    _ => {
-                        pre_layer_update_vec.push((index_weight, cell.weights[index_weight] * deviation))
-                    }
+                    _ => pre_layer_update_vec
+                        .push((index_weight, cell.weights[index_weight] * deviation)),
                 };
                 // 更新当前神经细胞偏置项的权重
-                let update_value: f32 = cell.weights[index_weight] + deviation * NET_LEARNING_RATE * pre_activations[index_weight];
+                let update_value: f32 = cell.weights[index_weight]
+                    + deviation * self.net_learning_rate * pre_activations[index_weight];
                 cell.weights[index_weight] = update_value;
                 // 增加噪音，防止过拟合
                 // TODO 什么样的情况会导致过拟合与拟合不足
                 if index_weight == (layer.input_numbers - 1) {
-                    let update_value: f32 = cell.weights[index_weight] + deviation * NET_LEARNING_RATE;
+                    let update_value: f32 =
+                        cell.weights[index_weight] + deviation * self.net_learning_rate;
                     cell.weights[index_weight] = update_value;
                 }
             }
@@ -219,7 +230,7 @@ impl NeuralNet {
             // 增加噪音，防止过拟合
             cell_input_total += weights[layer.input_numbers - 1];
             // 计算输出值
-            cell.activation = ul::sigmoid_activation(cell_input_total, ACTIVATION_RESPONSE);
+            cell.activation = ul::sigmoid_activation(cell_input_total, self.activation_response);
         }
     }
 }
