@@ -21,6 +21,7 @@ use crate::util::IMAGE_SIZE;
 use rand::prelude::*;
 use repository::*;
 use std::collections::HashMap;
+use std::env;
 use util as ul;
 
 lazy_static! {
@@ -51,9 +52,17 @@ const TEST_LABELS: &str = "resources/t10k-labels.idx1-ubyte";
 const NUM_NET_OUT: usize = 10usize;
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    let hidden_layers_size = if args.len() > 1 {
+        let arg1 = &args[1];
+        arg1.parse::<usize>().unwrap()
+    } else {
+        1usize
+    };
+
     let logfile = FileAppender::builder()
         .encoder(Box::new(PatternEncoder::new("{l} - {m}\n")))
-        .build("result.log")
+        .build(format!("result{}.log", hidden_layers_size))
         .unwrap();
 
     let config = Config::builder()
@@ -68,8 +77,9 @@ fn main() {
     let mut params_list: Vec<(usize, usize, usize, f32, f32)> = Vec::new();
     // 隐含层神经元个数
     let vec_num_hidden = vec![30, 60, 80, 100, 120, 150, 200, 250, 300, 350, 400, 450, 500];
-    // 隐藏层数目
-    let vec_hidden_layers_size = vec![1, 2, 3, 4, 5];
+    // // 隐藏层数目,最小为1
+    // let vec_hidden_layers_size = vec![1, 2, 3, 4, 5];
+    let vec_hidden_layers_size: Vec<usize> = vec![hidden_layers_size];
     // 学习次数
     let vec_learning_times = vec![1, 2, 3, 4, 5];
     // 学习率
@@ -77,6 +87,7 @@ fn main() {
     // Sigmoid函数缩放率
     let vec_activation_response = vec![0.6f32, 0.7f32, 0.8f32];
 
+    // 寻找最合适的参数
     for i in &vec_num_hidden {
         for j in &vec_hidden_layers_size {
             for k in &vec_learning_times {
@@ -88,12 +99,12 @@ fn main() {
             }
         }
     }
-
     for params in &params_list {
         for _ in 0..5 {
             execution(params.0, params.1, params.2, params.3, params.4);
         }
     }
+    info!("Application completed");
 }
 
 /// num_hidden: 隐含层神经元个数 TODO 理解有待加深，如何选择合适的神经元个数？
@@ -114,11 +125,9 @@ fn execution(
         hidden_layers_size,
         net_learning_rate,
         activation_response,
+        num_hidden,
+        &mut rng,
     );
-    let layer_hidden = core::NeuralLayer::new(IMAGE_SIZE, num_hidden, &mut rng);
-    let layer_output = core::NeuralLayer::new(num_hidden, NUM_NET_OUT, &mut rng);
-    net.push_neural_layer(layer_hidden);
-    net.push_neural_layer(layer_output);
 
     for _ in 0..learning_times {
         let mut train_data_provider = DataProvider::new(TRAIN_IMAGES, TRAIN_LABELS);
@@ -150,12 +159,12 @@ fn execution(
         };
     }
     info!(
-        "隐含层神经元个数=[{}]，隐藏层数目=[{}]，学习率=[{}]，激活函数缩放率=[{}]，学习次数=[{}]，测试结果[{}/{}]",
+        "隐含层神经元个数=[{}]，隐藏层数目=[{}]，学习次数=[{}]，学习率=[{}]，激活函数缩放率=[{}]，测试结果[{}/{}]",
         num_hidden,
         hidden_layers_size,
+        learning_times,
         net_learning_rate,
         activation_response,
-        learning_times,
         ok_counts,
         test_data_provider.total
     );

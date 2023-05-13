@@ -1,4 +1,4 @@
-use crate::util as ul;
+use crate::util::{self as ul, IMAGE_SIZE};
 use rand::prelude::*;
 
 /// 神经细胞
@@ -98,17 +98,38 @@ pub struct NeuralNet {
 }
 
 impl NeuralNet {
+    /// output_layer_numbers: 输出层个数
+    /// hidden_layers_size: hidden_layers_size
+    /// net_learning_rate: 学习率
+    /// activation_response: Sigmoid函数缩放率
+    /// num_hidden: 隐含层神经元个数
+    /// rng
     pub fn new(
-        param_output_layer_numbers: usize,
-        param_hidden_layers_size: usize,
+        output_layer_numbers: usize,
+        hidden_layers_size: usize,
         net_learning_rate: f32,
         activation_response: f32,
+        num_hidden: usize,
+        rng: &mut ThreadRng,
     ) -> NeuralNet {
         NeuralNet {
-            output_layer_numbers: param_output_layer_numbers,
-            hidden_layers_size: param_hidden_layers_size,
+            output_layer_numbers: output_layer_numbers,
+            hidden_layers_size: hidden_layers_size,
             total_deviation: 9999.0f32,
-            layers_vec: Vec::new(),
+            layers_vec: {
+                let mut layers_vec = Vec::with_capacity(hidden_layers_size + 1);
+                // 第一层，输入层个数为图片的像素点个数IMAGE_SIZE，神经细胞个数为隐含层神经元个数
+                layers_vec.push(NeuralLayer::new(IMAGE_SIZE, num_hidden, rng));
+                // 第二层以及以后的隐含层，输入层个数为隐含层神经元个数，神经细胞个数为隐含层神经元个数
+                if hidden_layers_size > 1 {
+                    for _ in 1..hidden_layers_size {
+                        layers_vec.push(NeuralLayer::new(num_hidden, num_hidden, rng));
+                    }
+                }
+                // 输出层，输入个数为隐含层神经元个数，神经细胞个数为10
+                layers_vec.push(NeuralLayer::new(num_hidden, output_layer_numbers, rng));
+                layers_vec
+            },
             net_learning_rate: net_learning_rate,
             activation_response: activation_response,
         }
